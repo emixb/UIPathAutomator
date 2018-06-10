@@ -18,6 +18,10 @@ class ActionApplier {
             return performButtonAction(action: buttonAction, in: currentViewController.view)
         }
         
+        if let barButtonItemAction = action as? NavigationAction, let navController = currentViewController as? UINavigationController  {
+            return performBarButonItemAction(action: barButtonItemAction, navController: navController)
+        }
+        
         if let cellAction = action as? CellAction {
             return performTableViewCellAction(action: cellAction, in: currentViewController.view)
         }
@@ -38,6 +42,9 @@ class ActionApplier {
             view = ViewFinder.findSubviewInViewHierarchy(rootView: rootView, identifier: id)
         case .contains(let text):
             view = ViewFinder.findSubviewInViewHierarchy(rootView: rootView, containing: text)
+        case .displays(let image):
+            guard let imagePNGRepresentation = UIImagePNGRepresentation(image) else { return false }
+            view = ViewFinder.findSubviewInViewHierarchy(rootView: rootView, displaying: imagePNGRepresentation)
         }
         
         guard let control = view as? UIControl else {
@@ -62,6 +69,15 @@ class ActionApplier {
         }
         
         return false
+    }
+    
+    private func performBarButonItemAction(action: NavigationAction, navController: UINavigationController) -> Bool {
+        
+        switch action {
+        case .back:
+            navController.popViewController(animated: true)
+            return true
+        }
     }
     
     private func performTableViewCellAction(action: CellAction, in rootView: UIView) -> Bool {

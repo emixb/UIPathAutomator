@@ -69,6 +69,21 @@ class ViewFinder {
         return nil
     }
     
+    static func findSubviewInViewHierarchy(rootView: UIView, displaying imagePNGRepresentation: Data) -> UIView? {
+        
+        if ViewFinder.isImageBeingDisplayed(in: rootView, imagePNGRepresentation: imagePNGRepresentation) {
+            return rootView
+        }
+        
+        for subview in rootView.subviews {
+            if let someView = ViewFinder.findSubviewInViewHierarchy(rootView: subview, displaying: imagePNGRepresentation) {
+                return someView
+            }
+        }
+        
+        return nil
+    }
+    
     static func findActionableSuperviewControl(for control: UIControl) -> UIControl? {
         
         var currentView: UIView = control
@@ -82,14 +97,28 @@ class ViewFinder {
         
         return nil
     }
-    
+
     private static func isTextBeingDisplayed(in view: UIView, text: String) -> Bool {
         if let label = view as? UILabel {
-            return label.text?.contains(text) ?? false
+            return label.text?.lowercased().contains(text.lowercased()) ?? false
         }
         
         if let button = view as? UIButton {
-            return button.currentTitle?.contains(text) ?? false
+            return button.currentTitle?.lowercased().contains(text.lowercased()) ?? false
+        }
+        
+        // You can add other view types
+        
+        return false
+    }
+    
+    private static func isImageBeingDisplayed(in view: UIView, imagePNGRepresentation: Data) -> Bool {
+        if let imageView = view as? UIImageView, let displayedImage = imageView.image {
+            return UIImagePNGRepresentation(displayedImage) == imagePNGRepresentation
+        }
+ 
+        if let button = view as? UIButton, let displayedImage = button.currentImage {
+            return UIImagePNGRepresentation(displayedImage) == imagePNGRepresentation
         }
         
         // You can add other view types

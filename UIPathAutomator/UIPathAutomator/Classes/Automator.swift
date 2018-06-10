@@ -48,7 +48,7 @@ public class Automator {
         
         if actionSucceeded {
             nextActionIndex += 1
-            let actionName = String(describing: type(of: action)).padding(toLength: 15, withPad: " ", startingAt: 0)
+            let actionName = String(describing: type(of: action)).padding(toLength: 20, withPad: " ", startingAt: 0)
             print("\(debugName) Step \(nextActionIndex) of \(actions.count) completed: \(actionName) \(action)")
         }
         
